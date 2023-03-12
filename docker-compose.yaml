@@ -9,7 +9,6 @@ services:
         stdin_open: true
         tty: true
         user: 1000:1000
-        restart: on-failure
         working_dir: /workspace
         entrypoint:
           - /bin/bash
@@ -24,6 +23,10 @@ services:
         volumes:
           - "../workspace:/workspace"
         deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 3
             resources:
                 reservations:
                     devices:
