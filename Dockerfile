@@ -51,11 +51,11 @@ RUN apt install -y \
 # User
 RUN apt install -y sudo \
   ; echo "%sudo ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers \
-  ; groupadd -g ${gid} %{user} \
+  ; groupadd -g ${gid} ${user} \
   ; useradd --create-home --no-log-init -u ${uid} -g ${gid} --shell /bin/bash ${user} \
-  ; usermod -aG sudo ${user} \
-  ; echo "${user}:1" | chpasswd \
-  ; cp /root/.inputrc /home/${user}/
+  ; echo "${user} ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers \
+ && echo "${user}:1" | chpasswd \
+ && cp /root/.inputrc /home/${user}/
 
 # gcc
 # COPY ./tools/gcc-ubuntu-9.3.0-2020.03-x86_64-aarch64-linux-gnu.tar.gz /tmp/
@@ -64,4 +64,4 @@ RUN apt install -y sudo \
 #   ; rm ./gcc-ubuntu-9.3.0-2020.03-x86_64-aarch64-linux-gnu.tar.gz
 
 WORKDIR /workspace
-ENTRYPOINT ["/bin/bash" "-c"]
+ENTRYPOINT ["/bin/bash"]
