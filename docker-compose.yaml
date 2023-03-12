@@ -8,16 +8,25 @@ services:
         privileged: true
         stdin_open: true
         tty: true
+        user: 1000:1000
         restart: on-failure
         working_dir: /workspace
         entrypoint:
-            - /bin/bash
+          - /bin/bash
         network_mode: "host"
         extra_hosts:
-            - "tmp_domain:192.168.1.10"
+          - "tmp_domain:192.168.1.10"
         devices:
-            - "/tmp/.X11-unix:/tmp/.X11-unix"
+          - "/tmp/.X11-unix:/tmp/.X11-unix"
         environment:
-            - "DISPLAY=:0"
+          - "DISPLAY=:0"
+          - TZ=Asia/Shanghai
         volumes:
-            - "../:/workspace"
+          - "../workspace:/workspace"
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                        - capabilities: ["gpu"]
+                          driver: nvidia
+                          device_ids: ["0"]
