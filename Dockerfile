@@ -1,6 +1,9 @@
 FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
+ARG user=wj
+ARG uid=1000
+ARG gid=1000
 
 RUN sed -i "s/archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g" /etc/apt/sources.list \
   ; apt update \
@@ -44,6 +47,15 @@ RUN apt install -y \
         matplotlib \
         opencv-python \
         ipython
+
+# User
+RUN apt install -y sudo \
+  ; echo "%sudo ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers \
+  ; groupadd -g ${gid} %{user} \
+  ; useradd --create-home --no-log-init -u ${uid} -g ${gid} --shell /bin/bash ${user} \
+  ; usermod -aG sudo ${user} \
+  ; echo "${user}:1" | chpasswd \
+  ; cp /root/.inputrc /home/${user}/
 
 # gcc
 # COPY ./tools/gcc-ubuntu-9.3.0-2020.03-x86_64-aarch64-linux-gnu.tar.gz /tmp/
